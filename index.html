@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Birthday.exe</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Retro font -->
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: black;
+    font-family: 'VT323', monospace;
+}
+
+.frame {
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ff00;
+    background: url("background.png") center no-repeat;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.screen {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    height: 100vh;
+    max-width: 95vw;
+}
+
+
+/* Top-left boot text */
+.boot {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: bold;
+}
+
+/* Center main text */
+.center-text {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #ffff55;
+    text-shadow: 3px 3px 0 #000;
+}
+
+.center-text h1 {
+    font-size: 52px;
+    margin: 0;
+}
+
+.center-text h2 {
+    font-size: 32px;
+    margin: 10px 0 0;
+}
+
+/* Source code warning */
+.source-warning {
+    position: absolute;
+    bottom: 260px;
+    left: 60px;
+    background: #000;
+    border: 2px solid #ffff55;
+    padding: 10px 14px;
+    font-size: 18px;
+    color: #ffff55;
+}
+
+/* Windows 3.1 dialog */
+.dialog {
+    position: absolute;
+    right: 40px;
+    top: 48%;
+    transform: translateY(-50%);
+    width: 300px;
+    background: #c0c0c0;
+    border: 3px solid #000;
+    color: #000;
+    font-size: 18px;
+}
+
+.dialog-header {
+    background: #0000aa;
+    color: white;
+    padding: 6px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.dialog-body {
+    padding: 12px;
+}
+
+.dialog-footer {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.dialog-footer button {
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    padding: 4px 24px;
+    border: 2px solid #000;
+    background: #e0e0e0;
+    cursor: pointer;
+}
+
+.dialog-footer button:active {
+    transform: translate(1px, 1px);
+}
+
+/* Bottom command line */
+.cmd {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 22px;
+}
+
+.cursor {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.flash {
+    animation: flash 0.15s;
+}
+@keyframes flash {
+    from { filter: brightness(1.3); }
+    to { filter: brightness(1); }
+}
+
+.loading {
+    position: absolute;
+    bottom: 70px;
+    left: 20px;
+    color: #00ff00;
+    font-size: 20px;
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame">
+    <div class="screen">
+        <!-- boot text -->
+        <div class="boot">
+            BOOTING BIRTHDAY.EXE...<br>
+            PLAYER TYPE: GOLF BUDDY<br>
+            FRIEND STATUS: VERIFIED
+        </div>
+
+        <!-- center text -->
+        <div class="center-text">
+            <h1>HAPPY 35TH BIRTHDAY</h1>
+            <h2>LEVEL UP ACHIEVED<br>FRIEND MODE: LEGENDARY</h2>
+        </div>
+
+        <!-- source warning -->
+        <div class="source-warning">
+            ⚠ SOURCE CODE HAZARD<br>
+            EXPERIENCE POINTS BELOW
+        </div>
+
+        <!-- dialog -->
+        <div class="dialog" id="dialog1">
+            <div class="dialog-header">⚠ WARNING</div>
+            <div class="dialog-body">
+                AGE 35 DETECTED<br>
+                SWING OPTIMIZATION ADVISED<br>
+                Still swinging strong at 35<br><br>
+                — Your golf buddie
+            </div>
+            <div class="loading" id="loading">
+                [<span id="bar"></span><span class="cursor">_</span>]
+            </div>
+            <div class="dialog-footer">
+                <button id="okBtn">OK</button>
+            </div>
+        </div>
+
+        <div class="dialog" id="dialog2" style="display:none;">
+            <div class="dialog-header">SYSTEM</div>
+            <div class="dialog-body">
+                OPTIMIZATION COMPLETE<br><br>
+                READY TO CONTINUE
+            </div>
+            <div class="dialog-footer">
+                <button id="continueBtn">CONTINUE</button>
+            </div>
+        </div>
+
+        <!-- command -->
+        <div class="cmd">
+            C:\FRIENDS&gt; press ENTER to celebrate<span class="cursor">_</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const okBtn = document.getElementById("okBtn");
+    const continueBtn = document.getElementById("continueBtn");
+    const dialog1 = document.getElementById("dialog1");
+    const dialog2 = document.getElementById("dialog2");
+    const cmd = document.querySelector(".cmd");
+    const screen = document.querySelector(".screen");
+    const loading = document.getElementById("loading");
+    const bar = document.getElementById("bar");
+
+    function beep() {
+        const b = new Audio("beep.wav");
+        b.volume = 0.4;
+        b.play();
+    }
+
+    function flash() {
+        screen.classList.add("flash");
+        setTimeout(() => screen.classList.remove("flash"), 150);
+    }
+
+    function runExe() {
+        beep();
+        flash();
+        dialog1.style.display = "none";
+
+        loading.style.display = "block";
+        bar.textContent = "";
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            bar.textContent += "#";
+            progress++;
+
+            if (progress === 10) {
+                clearInterval(interval);
+                loading.style.display = "none";
+                dialog2.style.display = "block";
+            }
+        }, 120);
+    }
+
+    // OK button
+    okBtn.addEventListener("click", runExe);
+
+    // ENTER key triggers OK
+    document.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            if (dialog1.style.display !== "none") runExe();
+            else if (dialog2.style.display !== "none") showEnd();
+        }
+    });
+
+    // Continue button
+    continueBtn.addEventListener("click", showEnd);
+
+    function showEnd() {
+        beep();
+        flash();
+        dialog2.style.display = "none";
+
+        cmd.innerHTML = `
+            C:\\FRIENDS&gt; birthday.exe completed<br>
+            C:\\FRIENDS&gt; thanks for playing<span class="cursor">_</span>
+        `;
+    }
+</script>
+</body>
+</html>
